@@ -1,80 +1,63 @@
-# Portfolio
+# Exercise Portfolio Template
 
-## Maps
+## Template
 
-**DUE:** April 26, 2019, Noon.
+This repository has been created to simplify the process of adding your visualizations to the web.
 
-*Note:* This exercise is to be completed as part of your final exercise portfolio submission.
+You are welcome to modify these and/or create your own design. Keep in mind you want to keep the code of your design relatively simple so it does not interfere with your visualizations.
 
+### Assets
 
-## Before You Begin
+The following files/directories are included in this repository:
 
-This visualizations should be built utilize `template.html` from your [`exercise-portfolio`](https://github.com/umiami-data-viz/exercise-portfolio).
+- README.md (this file)
+- css
+  - style.css
+- data
+  - .keep (allows the directory to be recognized by git)
+- js
+  - d3.min.js
+- index.html
+- template.html
 
-
-## Instructions
-
-Create one **choropleth map** and one **interactive map** using *only* [d3](https://d3js.org/) (and [lodash](https://lodash.com) if necessary).
-
-Each visualization should be in a separate file (i.e. `choropleth.html`, `interactive-map.html`) in your exercise portfolio.
-
-Make sure each visualization has all required details (i.e. a title, text description, labels, axes, legends, etc.) — not just the data!
-
-
-### Data
-
-#### GeoJSON
-
-Included in `data/geojson` are two geoJSON files provided — `world.json` and `us-states.json` — depending on the visualizations you choose to create. For each map, you will need to select the correct geoJSON dataset to use as well as an acceptable projection.
+### Instructions
 
 
-#### UNESCO World Heritage Sites
+**NOTE: These instructions are no longer applicable since the repository has been moved to the archive. If you choose to use these files, you will need to set this up using your own knowledge of GitHub and GitHub Pages.**
 
-Included in `data` is `unesco-world-heritage-sites.csv` which contains a list of countries and the number of UNESCO World Heritage Sites within its borders.
+#### Setup
 
+1. If you have not already, sign up for a [GitHub](https://github.com) account. Be sure to verify your email.
 
-#### United States Veterans
+2. In this repo (`umiami-data-viz/exercise-portfolio`), click **Fork**. This will make a copy of the repo in *your* account. When the process is complete, you will be looking at the copied version.
 
-Included in `data` is `united-states-veterans.csv` which contains a breakdown of veteran populations (and percentage of total population over 18) by state. These statistics are further broken down by time period (wars in which the veterans served).
+3. Click the **Settings** option and scroll down to the **GitHub Pages** section. Under **Source**, change the pulldown from None to **master branch**. The page will refresh.
 
+4. Scroll down, again to the **GitHub Pages**. You should see the following message (where username is *your* username):
 
-#### Wonders of the World
+```text
+Your site is ready to be published at https://username.github.io/exercise-portfolio/.
+```
 
-Included in `data` is `seven-ancient-wonders.csv` and `seven-modern-wonders.csv`. These list the seven ancient and modern wonders, a timeframe of when the wonder was constructed and coordinates.
-
-
-### Choropleth Map
-
-Create a choropleth of either the UNESCO World Heritage Sites or United States Veterans. In the case of the latter, display either total veteran percentage (`veteran_pct`) of each state or the veteran percentage of a given war (i.e. `pct_terror` for the War on Terror (Afghanistan, Iraq), `pct_gulf` for the Gulf War (1991), `pct_wwii` for World War II, etc.)
-
-In both cases, remember to merge your data with the geoJSON object created by d3. Use one of [d3-scale-chromatic's color schemes](https://github.com/d3/d3-scale-chromatic) for the map and legend.
+5. Click the link. This will take you to your portfolio on the web.
 
 
-### Interactive Map
+#### Update
 
-Create a map which plots the locations of the Seven Ancient and Modern Wonders of the world. Merge the datasets in JavaScript. (*DO NOT* copy these files into one csv; import both csv files, and merge the data into one object.)
+6. Using either [GitHub Desktop]() or the command line, clone the `exercise-portfolio` repository in in your account.
 
-For each location, add an HTML tooltip which lists information about the site, such as the name and years needed to construct. Can you make the tooltip for the Ancient Wonders display more information?
+7. On your computer, edit the `index.html` file where comments are made. Add your name to the `h1`. You may also want to write a short introduction as to what the site is about.
 
-*Bonus:* For an extra 2.5 points on your portfolio exercise grade, implement zoom/reset functionality on this map. Be sure to include limits.
+  As you add new exercises, add a link to each file and change the link text to reflect the type of chart (i.e. Bar Chart, Scatterplot).
 
+8. Also update `template.html` to include your name in the `h1`. Note the content of this file. Once you have added your name, this is ready for you to make duplicate copies, rename it based on the exercise (i.e. `bar-chart.html`) and just begin coding your visualization.
 
-## Submitting Your Work
+  For every visualization you create, you will want to add a title for the visualization in the `h2` and add a short description of the visualization in the paragraph below.
 
-**Email Prof. Brown with a link to your exercise portfolio no later than April 26, 2019, Noon.**
+  Always provide a title for the visualization and text explaining what it is about. Do not assume your reader will see the chart, labels and automatically understand.
 
-Late submissions or incomplete exercises will receive a zero (0).
+  You may also want to indicate in a separate paragraph what the purpose of the exercise was (i.e. "This visualization demonstrates building a bar chart with d3").
 
+9. When you have completed the updates, commit these changes in GitHub Desktop (or via the command line) and push the files to GitHub.
 
-## Review
-
-This exercise is due as part of your final exercise portfolio submission. These will not be reviewed in class. Be sure to submit a working, detailed exercise as points will be deducted for incomplete or broken visualizations.
-
-
-## Reminder
-
-Students are expected to complete these visualizations individually. Do not copy/paste code from notes, exercises or the book. **Your code is expected to be unique.**
-
-Students who have identical (or near-identical) code will earn a zero on the assignment when portfolios are graded.
-
-**Good luck!**
+10. Check the URL GitHub provided (`https://username.github.io/exercise-portfolio/`) to see the updated files have been published.

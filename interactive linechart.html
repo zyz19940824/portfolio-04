@@ -1,0 +1,230 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <title>Exercise Portfolio 3</title>
+  <link href="css/style.css" rel="stylesheet" />
+  <style>
+    .data-line {
+      fill: none;
+      stroke: rgba(54, 174, 175, 0.65);
+      stroke-width: 3px;
+    }
+
+    .tooltip {
+      position: absolute;
+      top: 0;
+      left: 0;
+      background: #ffffff;
+      border: 1px solid #000000;
+      border-radius: 10px;
+      display: block;
+    }
+
+    .tooltip.hidden {
+      display: none;
+    }
+  </style>
+</head>
+
+<body>
+
+  <header>
+    <!-- ADD YOUR NAME -->
+    <h1>YAOZHI ZHANG: Exercise Portfolio</h1>
+  </header>
+
+  <div id="content">
+
+    <nav>
+      <ul>
+        <li><a href="index.html">Return to Main Page</a></li>
+      </ul>
+    </nav>
+
+    <main>
+
+      <h2>Interactive Line Chart for APPLE closing sales</h2>
+
+      <p>This data set provides monthly stock information for Walt Disney Company.</p>
+      <ol>
+        <li>Month and Year (i.e. Jan 2019)</li>
+        <li>High ($96.43)</li>
+        <li>Low ($90.83)</li>
+
+      </ol>
+
+
+      <!-- ADD YOUR VISUALIZATION HERE -->
+
+    </main>
+  </div>
+  <div class="tooltip">
+    <!--HTML CODE-->
+  </div>
+
+  <script src="js/d3.min.js"></script>
+  <script>
+    var w = 1000;
+    var h = 500;
+    var margin = {
+      top: 60,
+      right: 80,
+      bottom: 60,
+      left: 60
+    };
+
+
+    d3.csv("data/DIS.csv").then(function(data) {
+      var parseTime = d3.timeParse("%Y-%m-%d");
+      var formatTime = d3.timeFormat("%b-%Y");
+      // return formatTime(parseTime(d.Date));
+
+
+      data.forEach(function(d) {
+        d.Date = parseTime(d.Date);
+        d.Close = +d.Close;
+        d.High = +d.High;
+        d.Low = +d.Low;
+      });
+
+
+
+      var svg = d3.select("body")
+        .append("svg");
+
+      svg.attr("width", w)
+        .attr("height", h);
+
+      var xScale = d3.scaleTime()
+        .domain([d3.min(data, function(d) {
+          return d.Date;
+        }), d3.max(data, function(d) {
+          return d.Date
+        })])
+        .range([0, (w - margin.left - margin.right)]);
+
+      var yScale = d3.scaleLinear()
+        .domain([d3.min(data, function(d) {
+          return d.Close;
+        }), d3.max(data, function(d) {
+          return d.Close
+        })])
+        .range([(h - margin.top - margin.bottom), 0]);
+
+      var line = d3.line()
+        .x(function(d) {
+          return xScale(d.Date);
+        })
+        .y(function(d) {
+          return yScale(d.Close);
+        });
+
+      svg.append("g")
+        .attr("transform", "translate(" + margin.left + "," + margin.top + ")")
+        .append("path")
+        .datum(data)
+        .attr("class", "data-line")
+        .attr("d", line)
+
+      var plots = svg.selectAll("circle")
+        .data(data)
+        .enter()
+        .append("circle")
+        .attr("transform", "translate(" + margin.left + "," + margin.top + ")")
+        .attr("opacity", "0")
+        .attr("cx", function(d) {
+          return xScale(d.Date)
+        })
+        .attr("cy", function(d) {
+          return yScale(d.Close)
+        })
+        .attr("r", "4")
+        .on("mouseover", function(d) {
+          d3.select(".tooltip").classed("hidden", false);
+
+
+        })
+        .on("mousemove", function(d) {
+          var currentX = d3.event.pageX + 10;
+          var currentY = d3.event.pageY + 10;
+          d3.select(".tooltip")
+            .style("left", currentX + "px")
+            .style("top", currentY + "px")
+
+            .html("<p> High: " + d.High + "$" + "</br>" + "low: " + d.Low + "$" + "</br> " + formatTime(d.Date)
+          )})
+            .on("mouseout", function(d) {
+
+              d3.select(".tooltip").classed("hidden", true);
+            });
+
+
+
+
+
+
+      var xAxis = d3.axisBottom()
+        .scale(xScale)
+        .ticks(10);
+
+      var yAxis = d3.axisLeft()
+        .scale(yScale)
+        .ticks(10)
+
+      svg.append("g")
+        .attr("transform", "translate(" + margin.left + "," + (h - margin.bottom) + ")")
+        .attr("class", "xaxis")
+        .call(xAxis);
+
+      svg.append("g")
+        .attr("transform", "translate(" + margin.left + "," + margin.top + ")")
+        .attr("class", "yaxis")
+        .call(yAxis);
+      var max = d3.max(data, function(d) {
+        return d.Close
+      });
+
+      var maxRate = data.filter(function(d) {
+
+        if (d.Close == max) {
+          return d.Close;
+        }
+      });
+
+      var tag = svg.append("text")
+        .style("opacity", 0)
+        .attr("x", 400)
+        .attr("y", yScale(max))
+        .attr("transform", "translate(" + (margin.left + 4) + "," + (margin.top - 4) + ")")
+        .text("High: " + Math.round(maxRate[0].High) + "$" + ", " + "low: " + Math.round(maxRate[0].Low) + "$" + ", " + formatTime(maxRate[0].Date));
+
+
+      svg.selectAll("highest-line")
+        .data(data)
+        .enter()
+        .append("line")
+        .attr("stroke", "rgba(249, 208, 87, 0.7)")
+        .attr("stroke-width", "2.5px")
+        .attr("transform", "translate(" + margin.left + "," + margin.top + ")")
+
+        .attr("x1", 0)
+        .attr("x2", (w - margin.left - margin.right))
+        .attr("y1", yScale(max))
+        .attr("y2", yScale(max))
+        .on("mouseover", function(d) {
+          d3.select(this).attr("stroke", " red")
+          tag.style("opacity", 1);
+        })
+        .on("mouseout", function(d) {
+          d3.select(this).attr("stroke", "rgba(249, 208, 87, 0.7)")
+          tag.style("opacity", 0);
+
+
+    })
+  });
+  </script>
+</body>
+
+</html>

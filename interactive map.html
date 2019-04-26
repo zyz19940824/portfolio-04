@@ -1,0 +1,181 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <title>Exercise Portfolio</title>
+  <link href="css/style.css" rel="stylesheet" />
+  <style>
+    .tooltip {
+      position: absolute;
+      top: 0;
+      left: 0;
+      background: #ffffff;
+      border: 1px solid #000000;
+      border-radius: 10px;
+      display: block;
+    }
+
+    .tooltip.hidden {
+      display: none;
+    }
+  </style>
+</head>
+
+<body>
+
+  <header>
+    <!-- ADD YOUR NAME -->
+    <h1>YAOZHI ZHANG: Exercise Portfolio</h1>
+  </header>
+
+  <div id="content">
+
+    <nav>
+      <ul>
+        <li><a href="index.html">Return to Main Page</a></li>
+      </ul>
+    </nav>
+
+    <main>
+
+      <h2>
+        Interactive Map the Seven Ancient and Modern Wonders of the world
+      </h2>
+
+      <p>
+        This interactive map shows the locations of the Seven Ancient and Modern Wonders of the world. If hover over, name and years needed to construct will appear.
+        Includes Channel Tunnel,
+        CN Tower,
+        Empire State Building,
+        Golden Gate Bridge,
+        Itaipu Dam,
+        Delta & Zuiderzee Works,
+        Panama Canal, and Great Pyramid of Giza,
+        Hanging Gardens of Babylon,
+        Temple of Artemis at Ephesus,
+        Statue of Zeus at Olympia,
+        Mausoleum at Halicarnassus,
+        Colossus of Rhodes,
+        Lighthouse of Alexandria.
+</p>
+
+        <!-- ADD YOUR VISUALIZATION HERE -->
+
+    </main>
+  </div>
+  <div class="tooltip">
+    <!--HTML CODE-->
+  </div>
+  <script src="js/d3.min.js"></script>
+  <script src="js/lodash.min.js"></script>
+  <script>
+    var width = 1000;
+    var height = 600;
+
+
+    var margin = {
+      top: 60,
+      right: 80,
+      bottom: 60,
+      left: 60
+    };
+
+    var svg = d3.select("body")
+      .append("svg")
+      .attr("width", width)
+      .attr("height", height)
+      .append("g")
+      .attr("tranform", "translate(0" + margin.left + "," + margin.top + ")");
+
+    d3.json("data/geojson/world.json").then(function(world) {
+      d3.csv("data/seven-ancient-wonders.csv").then(function(ancient) {
+        d3.csv("data/seven-modern-wonders.csv").then(function(modern) {
+
+          var worldFeatures = world.features;
+          ancient.forEach(function(a) {
+            a.longitude = +a.longitude;
+            a.latitude = +a.latitude;
+          });
+          modern.forEach(function(m) {
+            m.longitude = +m.longitude;
+            m.latitude = +m.latitude;
+          });
+
+          var allWonders = _.zip(ancient, modern);
+          console.log(allWonders);
+
+
+          var result = _.flatten(allWonders);
+          console.log(result);
+
+
+          var projection = d3.geoMercator()
+            .translate([width / 2, height / 2])
+            .scale([100]);
+
+          var path = d3.geoPath()
+            .projection(projection);
+
+          var map = svg.append("g")
+            .attr("id", "map")
+          map.selectAll("path")
+            .data(worldFeatures)
+            .enter()
+            .append("path")
+            .attr("d", path)
+            .attr("fill", "rgba(54, 174, 175, 0.65)")
+            .attr("stroke", "white")
+            .attr("stroke-width", "0.3px");
+
+          var plots = map.selectAll("circle")
+            .data(result)
+            .enter()
+            .append("circle")
+            .attr("class", "plots")
+            .attr("cx", function(d) {
+              if (projection([d.longitude, d.latitude])) {
+                return projection([d.longitude, d.latitude])[0]
+              }
+            })
+            .attr("cy", function(d) {
+              if (projection([d.longitude, d.latitude])) {
+                return projection([d.longitude, d.latitude])[1]
+              }
+            })
+            .attr("fill", "rgba(217,91,67,0.8)")
+            .attr("r", "5px")
+
+
+            .on("mouseover", function(d) {
+              d3.select(".tooltip").classed("hidden", false);
+
+
+            })
+            .on("mousemove", function(d) {
+              var currentX = d3.event.pageX + 10;
+              var currentY = d3.event.pageY + 10;
+              d3.select(".tooltip")
+                .style("left", currentX + "px")
+                .style("top", currentY + "px")
+
+                .html(function() {
+                  if (d.destroyed == null) {
+                    return "<p> Wonder: " + d.wonder + "<br/>" + "Constructed: " + d.constructed;
+                  } else {
+                    return "<p> Wonder: " + d.wonder + "<br/>" + "Constructed: " + d.constructed + "<br/>" + "Destroyed:" + d.destroyed + "<br/>" + "Builders: " + d.builders;
+                  };
+                })
+
+            })
+            .on("mouseout", function(d) {
+
+              d3.select(".tooltip").classed("hidden", true);
+            });
+        })
+      })
+    })
+  </script>
+</body>
+
+</html>

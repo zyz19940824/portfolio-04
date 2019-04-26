@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <title>Exercise Portfolio</title>
+  <link href="css/style.css" rel="stylesheet" />
+  <style>
+    bar {
+      fill: brown;
+    }
+
+    text {
+      stroke: black;
+    }
+  </style>
+</head>
+
+<body>
+
+  <header>
+    <!-- ADD YOUR NAME -->
+    <h1>YAOZHI ZHANG: Exercise Portfolio 3</h1>
+  </header>
+
+  <div id="content">
+
+    <nav>
+      <ul>
+        <li><a href="index.html">Return to Main Page</a></li>
+      </ul>
+    </nav>
+
+    <main>
+
+      <h2>Interactive Bar Chart shows standings for MLB Spring Training.</h2>
+
+
+
+      <!-- ADD YOUR VISUALIZATION HERE -->
+
+    </main>
+  </div>
+
+  <script src="js/d3.min.js"></script>
+  <script src="js/lodash.min.js"></script>
+  <script>
+    var margin = {
+        top: 20,
+        right: 20,
+        bottom: 30,
+        left: 40
+      },
+      width = 960 - margin.left - margin.right,
+      height = 500 - margin.top - margin.bottom;
+
+    var x = d3.scaleBand()
+      .rangeRound([0, width])
+      .padding(0.1);
+
+    var y = d3.scaleLinear()
+      .rangeRound([height, 0]);
+
+    d3.csv("data/spring-training.csv").then(function(data) {
+
+
+      var league = _.groupBy(data, 'league');
+      // console.log(league);
+
+      var grapefruit = _.groupBy(league["G"], 'pct');
+      console.log(grapefruit);
+
+      var cactus = _.groupBy(league["C"], 'pct');
+      // console.log(cactus);
+
+
+      var svg = d3.select("body").append("svg")
+        .attr("width", w)
+        .attr("height", h);
+
+        x.domain(data.map(function(d) {
+          return d.abbr;
+        }));
+
+        y.domain([0, d3.max(data, function(d) {
+          return d.win;
+        })]);
+
+
+
+    });
+  </script>
+</body>
+
+</html>

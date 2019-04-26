@@ -1,0 +1,335 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="utf-8" />
+  <title>Exercise Portfolio</title>
+  <link href="css/style.css" rel="stylesheet" />
+  <style>
+
+
+    .highest-line {
+      fill: none;
+      stroke: #222;
+      stroke-width: 1px;
+      stroke-dasharray: 6, 6;
+    }
+
+    .data-line {
+      fill: rgb(233, 205, 210);
+      stroke-width: 1px;
+      stroke: rgb(182, 101, 120);
+    }
+
+    .note-line {
+      fill: none;
+      stroke: rgb(182, 101, 120);
+      stroke-width: 2px;
+    }
+
+    .note-line2 {
+      fill: none;
+      stroke: rgb(245, 207, 33);
+      stroke-width: 2px;
+    }
+
+    .ipo-point {
+      fill: rgb(182, 101, 120);
+      stroke: 0;
+    }
+
+    .obama-line {
+      fill: none;
+      stroke: rgba(54, 174, 175, 0.65);
+      stroke-width: 2px;
+      stroke-dasharray: 4, 4;
+    }
+
+    .obama-text {
+      fill: black;
+      font-style: oblique;
+    }
+  </style>
+</head>
+
+<body>
+  <header>
+    <!-- ADD YOUR NAME -->
+    <h1>YAOZHI ZHANG: Exercise Portfolio 2</h1>
+  </header>
+
+  <div id="content">
+
+    <nav>
+      <ul>
+        <li><a href="index.html">Return to Main Page</a></li>
+      </ul>
+    </nav>
+
+    <main>
+
+      <h2>Area Chart for AMAZON closing sales</h2>
+
+  <p>This data det provides monthly stock information for Amazon from May 1, 1997 to March 1, 2019.
+    <ol>
+
+    <li>May 1997: Initial public offering (IPO)</li>
+    <li>January 2004: Amazon reports first profitable year</li>
+    <li>August 2017: Amazon acquires Whole Foods Market</li>
+    <li>September 2018: Amazon becomes a trillion-dollar company</li>
+
+    </ol></p>
+
+  <script src="js/d3.min.js"></script>
+  <script>
+    var w = 1000;
+    var h = 600;
+    var margin = {
+      top: 60,
+      right: 80,
+      bottom: 60,
+      left: 60
+    };
+
+    var ipoX, ipoY, proX, proY, wfX, wfY, triX, triY;
+
+    d3.csv("data/AMZN.csv").then(function(data) {
+      var timeParser = d3.timeParse("%Y-%m-%d");
+      var timeFormat = d3.timeFormat("%Y-%m-%d");
+
+      data.forEach(function(d) {
+        d.Date = timeParser(d.Date);
+        d.Close = +d.Close;
+      });
+
+      var svg = d3.select("body")
+        .append("svg");
+
+      svg.attr("width", w)
+        .attr("height", h);
+
+      var xScale = d3.scaleTime()
+        .domain([d3.min(data, function(d) {
+          return d.Date;
+        }), d3.max(data, function(d) {
+          return d.Date
+        })])
+        .range([0, (w - margin.left - margin.right)]);
+
+      var yScale = d3.scaleLinear()
+        .domain([d3.min(data, function(d) {
+          return d.Close;
+        }), d3.max(data, function(d) {
+          return d.Close
+        })])
+        .range([(h - margin.top - margin.bottom), 0]);
+
+      var line = d3.area()
+        .x(function(d) {
+          return xScale(d.Date);
+        })
+        .y0(function(d) {
+          return yScale.range()[0];
+        })
+        .y1(function(d) {
+          return yScale(d.Close)
+        });
+
+      svg.append("g")
+        .attr("transform", "translate(" + margin.left + "," + margin.top + ")")
+        .append("path")
+        .datum(data)
+        .attr("class", "data-line")
+        .attr("d", line);
+
+      var xAxis = d3.axisBottom()
+        .scale(xScale)
+        .ticks(10);
+
+      var yAxis = d3.axisLeft()
+        .scale(yScale)
+        .ticks(10);
+
+      svg.append("g")
+        .attr("transform", "translate(" + margin.left + "," + (h - margin.bottom) + ")")
+        .attr("class", "xaxis")
+        .call(xAxis);
+
+      svg.append("g")
+        .attr("transform", "translate(" + margin.left + "," + margin.top + ")")
+        .attr("class", "yaxis")
+        .call(yAxis);
+
+      var max = d3.max(data, function(d) {
+        return d.Close
+      });
+
+      var maxRate = data.filter(function(d) {
+        if (d.Close == max) {
+          return d.Close;
+        }
+      });
+
+      var idates = data.filter(function(d) {
+
+        if (timeFormat(d.Date) == "1997-05-01") {
+
+          return d, ipoX = d.Date, ipoY = d.Close;
+
+        }
+
+        if (timeFormat(d.Date) == "2004-01-01") {
+          return d, proX = d.Date, proY = d.Close;
+        }
+
+        if (timeFormat(d.Date) == "2017-08-01") {
+          return d, wfX = d.Date, wfY = d.Close;
+        }
+
+        if (timeFormat(d.Date) == "2018-09-01") {
+          return d, triX = d.Date, triY = d.Close;
+        }
+
+
+      });
+
+      var obama = data.filter(function(d) {
+        if (timeFormat(d.Date) == "2009-02-01") {
+          return d, startX = d.Date, startY = d.Close;
+        }
+
+        if (timeFormat(d.Date) == "2017-02-01") {
+          return d, endX = d.Date, endY = d.Close;
+        }
+      });
+
+      svg.append("line")
+        .attr("transform", "translate(" + margin.left + "," + margin.top + ")")
+        .attr("class", "highest-line")
+        .attr("x1", 0)
+        .attr("x2", (w - margin.left - margin.right))
+        .attr("y1", yScale(max))
+        .attr("y2", yScale(max));
+
+      svg.append("text")
+        .attr("x", 20)
+        .attr("y", yScale(max))
+        .attr("transform", "translate(" + (margin.left + 4) + "," + (margin.top - 4) + ")")
+        .text("Highest Close Price: " + maxRate[0].Close + " $");
+
+      svg.selectAll("circle")
+        .data(idates)
+        .enter()
+        .append("circle")
+        .attr("class", "ipo-point")
+        .attr("transform", "translate(" + margin.left + "," + margin.top + ")")
+        .attr("cx", function(d) {
+          return xScale(d.Date)
+        })
+        .attr("cy", function(d) {
+          return yScale(d.Close)
+        })
+        .attr("r", 5);
+
+        svg.append("text")
+          .attr("x", xScale(ipoX))
+          .attr("y", yScale(ipoY) - 15)
+          .attr("transform", "translate(" + (margin.left + 4) + "," + (margin.top - 4) + ")")
+          .text("Initial public offering (IPO)");
+
+        svg.append("text")
+          .attr("x", xScale(proX) - 170)
+          .attr("y", yScale(proY) -20)
+          .attr("transform", "translate(" + (margin.left + 4) + "," + (margin.top - 4) + ")")
+          .text("Amazon reports first profitable year");
+
+        svg.append("text")
+          .attr("x", xScale(wfX) - 130)
+          .attr("y", yScale(wfY) - 15)
+          .attr("transform", "translate(" + (margin.left + 4) + "," + (margin.top - 4) + ")")
+          .text("Amazon acquires Whole Foods Market");
+
+        svg.append("text")
+          .attr("x", xScale(triX) - 250)
+          .attr("y", yScale(triY) - 20)
+          .attr("transform", "translate(" + (margin.left + 4) + "," + (margin.top - 4) + ")")
+          .text("Amazon becomes a trillion-dollar company");
+
+        svg.append("line")
+          .attr("class", "note-line")
+          .attr("transform", "translate(" + (margin.left + 4) + "," + (margin.top - 4) + ")")
+          .attr("x1", (xScale(ipoX) + 3))
+          .attr("x2", (xScale(ipoX) + 13))
+          .attr("y1", (yScale(ipoY) - 3))
+          .attr("y2", (yScale(ipoY) - 13));
+
+        svg.append("line")
+          .attr("class", "note-line")
+          .attr("transform", "translate(" + (margin.left + 4) + "," + (margin.top - 4) + ")")
+          .attr("x1", (xScale(proX) - 15))
+          .attr("x2", (xScale(proX) - 7))
+          .attr("y1", (yScale(proY) - 13))
+          .attr("y2", (yScale(proY)- 3));
+
+        svg.append("line")
+          .attr("class", "note-line")
+          .attr("transform", "translate(" + (margin.left + 4) + "," + (margin.top - 4) + ")")
+          .attr("x1", (xScale(wfX) - 15))
+          .attr("x2", (xScale(wfX) - 7))
+          .attr("y1", (yScale(wfY) - 13))
+          .attr("y2", (yScale(wfY)- 3));
+
+        svg.append("line")
+          .attr("class", "note-line")
+          .attr("transform", "translate(" + (margin.left + 4) + "," + (margin.top - 4) + ")")
+          .attr("x1", (xScale(triX) - 15))
+          .attr("x2", (xScale(triX) - 7))
+          .attr("y1", (yScale(triY) - 13))
+          .attr("y2", (yScale(triY) - 3));
+
+        svg.append("line")
+          .attr("class", "obama-line")
+          .attr("transform", "translate(" + (margin.left + 4) + "," + (margin.top - 4) + ")")
+          .attr("x1", (xScale(startX)))
+          .attr("x2", (xScale(startX)))
+          .attr("y1", (yScale(max)))
+          .attr("y2", (yScale(0)));
+
+        svg.append("line")
+          .attr("class", "obama-line")
+          .attr("transform", "translate(" + (margin.left + 4) + "," + (margin.top - 4) + ")")
+          .attr("x1", (xScale(endX)))
+          .attr("x2", (xScale(endX)))
+          .attr("y1", (yScale(max)))
+          .attr("y2", (yScale(0)));
+
+        svg.append("line")
+          .attr("class", "note-line2")
+          .attr("transform", "translate(" + (margin.left + 4) + "," + (margin.top - 4) + ")")
+          .attr("x1", (xScale(startX)))
+          .attr("x2", (xScale(startX)+15))
+          .attr("y1", (yScale(0)+10))
+          .attr("y2", (yScale(0)+30));
+
+        svg.append("line")
+          .attr("class", "note-line2")
+          .attr("transform", "translate(" + (margin.left + 4) + "," + (margin.top - 4) + ")")
+          .attr("x1", (xScale(endX)-15))
+          .attr("x2", (xScale(endX)))
+          .attr("y1", (yScale(0)+30))
+          .attr("y2", (yScale(0)+10));
+
+        svg.append("text")
+          .attr("class", "obama-text")
+          .attr("x", xScale(startX) + 80)
+          .attr("y", yScale(startY) + 90)
+          .attr("transform", "translate(" + (margin.left) + "," + (margin.top-30) + ")")
+          .text("Obama administration");
+
+
+
+    })
+  </script>
+</body>
+
+</html>

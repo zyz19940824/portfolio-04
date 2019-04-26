@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <title>Exercise Portfolio</title>
+  <link href="css/style.css" rel="stylesheet" />
+</head>
+
+<body>
+
+  <header>
+    <h1>Yaozhi Zhang: Exercise Portfolio</h1>
+  </header>
+
+  <div id="content">
+
+    <nav>
+      <ul>
+        <li><a href="index.html">Return to Main Page</a></li>
+      </ul>
+    </nav>
+
+    <main>
+
+      <h2>Scatterplot</h2>
+
+      <p>The scatterplot is about This data set represents 2018 National Football League rushing statistics as it relates to players who are either running backs (RB) or fullbacks (FB). It is presented using comma-separated values (csv).</p>
+
+      <script src="js/d3.min.js"></script>
+      <script>
+        var w = 800,
+          h = 500,
+          padding = 30;
+
+        d3.csv("data/nfl-rushing.csv").then(function(data) {
+
+          var svg = d3.select("body").append("svg");
+
+          var xScale = d3.scaleLinear()
+            .domain([0, d3.max(data, function(d) {
+              return d.Yds
+            })])
+            .range([padding, w - padding]);
+
+          var yScale = d3.scaleLinear()
+            .domain([0, d3.max(data, function(d) {
+              return d.TD
+            })])
+            .range([h - padding, padding]);
+
+          var rScale = d3.scaleSqrt()
+
+            .domain([0, d3.max(data, function(d) {
+              return d.FUM
+            })]);
+
+          svg.attr("width", w + padding)
+            .attr("height", h + padding);
+
+          svg.selectAll("circle")
+            .data(data)
+            .enter()
+            .append("circle")
+            .attr("fill","rgba(54, 174, 175, 0.65)")
+            .attr("cx", function(d) {
+              return xScale(d.Yds)
+            })
+            .attr("cy", function(d) {
+              return yScale(d.TD)
+            })
+            .attr("r", function(d) {
+              return Math.sqrt(d.FUM * 20);
+            });
+
+
+          // svg.selectAll("text")
+          //   .data(data)
+          //   .enter()
+          //   .append("text")
+          //   .attr("x", function(d) { return xScale(d.Yds) + rScale(d.FUM) + 10 })
+          //   .attr("y", function(d) { return yScale(d.TD) + 10})
+          //   .text(function(d) { return d.Yds + ", " + d.TD});
+
+          var xAxis = d3.axisBottom()
+            .scale(xScale)
+            .ticks(5);
+
+          var yAxis = d3.axisLeft()
+            .scale(yScale)
+            .ticks(5);
+
+          svg.append("g")
+            .attr("class", "xaxis")
+            .attr("transform", "translate(0, " + (h - padding) + ")")
+            .call(xAxis);
+
+          svg.append("g")
+            .attr("class", "yaxis")
+            .attr("transform", "translate(" + padding + "," + 0 + ")")
+            .call(yAxis);
+        });
+      </script>
+
+    </main>
+  </div>
+</body>
+
+</html>
